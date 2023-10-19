@@ -58,7 +58,7 @@ class ApiHandler extends BaseServices
         }
 
         $requestBody = [];
-        if (!empty($appAuthData['httpHeaders'])) {
+        if (!empty($appAuthData['requestBody'])) {
             foreach ($appAuthData['requestBody'] as $wholevalue) {
                 foreach ($wholevalue as $key => $value) {
                     $requestBody[$key] = $value;
@@ -66,13 +66,13 @@ class ApiHandler extends BaseServices
             }
         }
 
-        $frameCurl->$appAuthData['request']($requestURL, $requestBody);
+        $frameCurl->{$appAuthData['request']}($requestURL, $requestBody);
 
         if ($frameCurl->error) {
             return [
                 'status' => 'error',
                 'content' => 'Error: ' . $frameCurl->errorMessage . "\n",
-                'diagnosis' => $frameCurl->diagnose()
+                'diagnosis' => $frameCurl->diagnose(true)
             ];
         } else {
             return [
@@ -112,14 +112,12 @@ class ApiHandler extends BaseServices
         switch ($pollingData['request']) {
             case 'get':
                 if (!empty($inputFields)) {
-                    foreach ($inputFields as $wholevalue) {
-                        foreach ($wholevalue as $key => $value) {
-                            if (array_key_exists($key, $userInputFields)) {
-                                $requestURL .= $firstParam == true
-                                    ? '?' . $key . '=' . $value
-                                    : '&' . $key . '=' . $value;
-                                $firstParam = false;
-                            }
+                    foreach ($inputFields as $key => $wholevalue) {
+                        if (array_key_exists($wholevalue['key'], $userInputFields)) {
+                            $requestURL .= $firstParam == true
+                                ? '?' . $wholevalue['key'] . '=' . $userInputFields[$wholevalue['key']]
+                                : '&' . $wholevalue['key'] . '=' . $userInputFields[$wholevalue['key']];
+                            $firstParam = false;
                         }
                     }
                 }
@@ -127,11 +125,9 @@ class ApiHandler extends BaseServices
             case 'post': # send input data as JSON
                 $frameCurl->setHeader('Content-Type', 'application/json');
                 if (!empty($inputFields)) {
-                    foreach ($inputFields as $wholevalue) {
-                        foreach ($wholevalue as $key => $value) {
-                            if (array_key_exists($key, $userInputFields)) {
-                                $requestBody[$key] = $value;
-                            }
+                    foreach ($inputFields as $key => $wholevalue) {
+                        if (array_key_exists($wholevalue['key'], $userInputFields)) {
+                            $requestBody[$key] = $userInputFields[$wholevalue['key']];
                         }
                     }
                 }
@@ -157,7 +153,7 @@ class ApiHandler extends BaseServices
             }
         }
 
-        if (!empty($pollingData['httpHeaders'])) {
+        if (!empty($pollingData['requestBody'])) {
             foreach ($pollingData['requestBody'] as $wholevalue) {
                 foreach ($wholevalue as $key => $value) {
                     $requestBody[$key] = $value;
@@ -165,13 +161,13 @@ class ApiHandler extends BaseServices
             }
         }
 
-        $frameCurl->$pollingData['request']($requestURL, $requestBody);
+        $frameCurl->{$pollingData['request']}($requestURL, $requestBody);
 
         if ($frameCurl->error) {
             return [
                 'status' => 'error',
                 'content' => 'Error: ' . $frameCurl->errorMessage . "\n",
-                'diagnosis' => $frameCurl->diagnose()
+                'diagnosis' => $frameCurl->diagnose(true)
             ];
         } else {
             return [
@@ -210,14 +206,12 @@ class ApiHandler extends BaseServices
         switch ($apiSettings['request']) {
             case 'get': # send as a parameter
                 if (!empty($inputFields)) {
-                    foreach ($inputFields as $wholevalue) {
-                        foreach ($wholevalue as $key => $value) {
-                            if (array_key_exists($key, $userInputFields)) {
-                                $requestURL .= $firstParam == true
-                                    ? '?' . $key . '=' . $value
-                                    : '&' . $key . '=' . $value;
-                                $firstParam = false;
-                            }
+                    foreach ($inputFields as $id => $wholevalue) {
+                        if (array_key_exists($wholevalue['key'], $userInputFields)) {
+                            $requestURL .= $firstParam == true
+                                ? '?' . $wholevalue['key'] . '=' . $userInputFields[$wholevalue['key']]
+                                : '&' . $wholevalue['key'] . '=' . $userInputFields[$wholevalue['key']];
+                            $firstParam = false;
                         }
                     }
                 }
@@ -225,11 +219,9 @@ class ApiHandler extends BaseServices
             case 'post': # send input data as JSON
                 $frameCurl->setHeader('Content-Type', 'application/json');
                 if (!empty($inputFields)) {
-                    foreach ($inputFields as $wholevalue) {
-                        foreach ($wholevalue as $key => $value) {
-                            if (array_key_exists($key, $userInputFields)) {
-                                $requestBody[$key] = $value;
-                            }
+                    foreach ($inputFields as $id => $wholevalue) {
+                        if (array_key_exists($wholevalue['key'], $userInputFields)) {
+                            $requestBody[$wholevalue['key']] = $userInputFields[$wholevalue['key']];
                         }
                     }
                 }
@@ -255,7 +247,7 @@ class ApiHandler extends BaseServices
             }
         }
 
-        if (!empty($apiSettings['httpHeaders'])) {
+        if (!empty($apiSettings['requestBody'])) {
             foreach ($apiSettings['requestBody'] as $wholevalue) {
                 foreach ($wholevalue as $key => $value) {
                     $requestBody[$key] = $value;
@@ -263,13 +255,13 @@ class ApiHandler extends BaseServices
             }
         }
 
-        $frameCurl->$apiSettings['request']($requestURL, $requestBody);
+        $frameCurl->{$apiSettings['request']}($requestURL, $requestBody);
 
         if ($frameCurl->error) {
             return [
                 'status' => 'error',
                 'content' => 'Error: ' . $frameCurl->errorMessage . "\n",
-                'diagnosis' => $frameCurl->diagnose()
+                'diagnosis' => $frameCurl->diagnose(true)
             ];
         } else {
             return [
