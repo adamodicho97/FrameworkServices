@@ -4,7 +4,7 @@ namespace FrameworkServices;
 
 use Curl\Curl;
 
-class ApiHander extends BaseServices
+class ApiHandler extends BaseServices
 {
     /**
      * Authenticate App
