@@ -1,0 +1,14 @@
+{
+    "name": "framework-services/framework-services",
+    "description": "Private library by Framework.",
+    "homepage": "https://myframework.app",
+    "require": {
+        "php": ">=7.0",
+        "php-curl-class/php-curl-class": "^9.18"
+    },
+    "autoload": {
+        "psr-4": {
+            "FrameworkServices\\": "FrameworkServices/"
+        }
+    }
+}
