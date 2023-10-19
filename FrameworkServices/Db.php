@@ -27,7 +27,7 @@ class Db extends BaseServices
      *
      * @return void
      */
-    protected function __construct($connectionCUD = [], $connectionRO = [])
+    public function __construct($connectionCUD = [], $connectionRO = [])
     {
         if (!empty($connectionCUD)) {
             $this->connectionCUD = $connectionCUD;
